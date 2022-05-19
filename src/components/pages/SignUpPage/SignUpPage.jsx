@@ -52,8 +52,8 @@ function SignUp() {
           setRegistrationFailed(t('errors.nicknameExists'));
           return;
         }
-        
-        console.log(err)
+
+        console.log(err);
         throw err;
       }
     },
