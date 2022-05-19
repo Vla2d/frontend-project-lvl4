@@ -5,7 +5,6 @@ import { Form, Button, Card } from 'react-bootstrap';
 import * as yup from 'yup';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
 import { useAuth } from '../../../hooks/index.js';
 import { loginPath } from '../../../routes.js';
 
@@ -41,8 +40,14 @@ function LoginPage() {
         const { from } = location.state || { from: { pathname: '/' } };
         navigate(from);
       } catch (err) {
+        if (err.isAxiosError && err.response.status === 401) {
+          setAuthFailed(true);
+          usernameInputRef.current.select();
+          return;
+        }
+
         console.log(err);
-        toast.error(t('notifications.connectionError'));
+        throw err;
       }
     },
   });

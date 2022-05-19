@@ -5,7 +5,6 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import { signUpPath } from '../../../routes.js';
 import { useAuth } from '../../../hooks/index.js';
 
@@ -39,7 +38,7 @@ function SignUp() {
       confirmPassword: yup
         .string()
         .required(t('errors.requiredField'))
-        .oneOf([yup.ref('password'), null], t('passwordConfirmation')),
+        .oneOf([yup.ref('password'), null], t('errors.passwordConjunction')),
     }),
     onSubmit: async (values) => {
       setRegistrationFailed(false);
@@ -49,9 +48,13 @@ function SignUp() {
 
         navigate('/');
       } catch (err) {
-        setRegistrationFailed(t('errors.nicknameExists'));
-        console.log(err);
-        toast.error(t('notifications.connectionError'));
+        if (err.isAxiosError && err.response.status === 409) {
+          setRegistrationFailed(t('errors.nicknameExists'));
+          return;
+        }
+        
+        console.log(err)
+        throw err;
       }
     },
   });
@@ -82,7 +85,7 @@ function SignUp() {
                       }
                   />
                   <Form.Label htmlFor="username">{t('userNickname')}</Form.Label>
-                  <Form.Control.Feedback type="invalid" tooltip placement="right">
+                  <Form.Control.Feedback type="invalid" placement="right">
                     {formik.errors.username}
                   </Form.Control.Feedback>
                 </Form.Group>
@@ -105,7 +108,7 @@ function SignUp() {
                       }
                   />
                   <Form.Label htmlFor="password">{t('password')}</Form.Label>
-                  <Form.Control.Feedback type="invalid" tooltip placement="right">
+                  <Form.Control.Feedback type="invalid" placement="right">
                     {formik.errors.password}
                   </Form.Control.Feedback>
                 </Form.Group>
@@ -127,8 +130,8 @@ function SignUp() {
                       }
                   />
                   <Form.Label htmlFor="confirmPassword">{t('passwordConfirmation')}</Form.Label>
-                  <Form.Control.Feedback type="invalid" tooltip placement="right">
-                    {t('errors.passwordConjunction') || t('errors.nicknameExists')}
+                  <Form.Control.Feedback type="invalid" placement="right">
+                    {formik.errors.confirmPassword || t('errors.nicknameExists')}
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Button
