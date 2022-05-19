@@ -3,12 +3,13 @@ import { Provider } from 'react-redux';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 import { I18nextProvider } from 'react-i18next';
 import { configureStore } from '@reduxjs/toolkit';
+import { io } from 'socket.io-client';
 import reducer, { actions } from './slices/index.js';
 import App from './components/App.jsx';
 import getI18nInstance from './locales/getI18nInstance.js';
 import SocketProvider from './components/providers/SocketProvider.jsx';
 
-async function Init(socketInstance) {
+async function Init(socketInstance = io()) {
   const store = configureStore({
     reducer,
   });
