@@ -14,16 +14,16 @@ function MessagesBlock() {
     }
   });
 
-  const currentChannelName = useSelector(getCurrentChannelName);
-  const messagesForCurrentChannel = useSelector(getMessagesForCurrentChannel);
-
-  const renderMessage = ({ text, username }) => (
-    <div className="text-break mb-2">
+  const renderMessage = (id, text, username) => (
+    <div className="text-break mb-2" key={id}>
       <b>{username}</b>
       {': '}
       {text}
     </div>
   );
+
+  const currentChannelName = useSelector(getCurrentChannelName);
+  const messagesForCurrentChannel = useSelector(getMessagesForCurrentChannel);
 
   return (
     <div className="col p-0 h-100">
@@ -40,7 +40,7 @@ function MessagesBlock() {
         </div>
         <div ref={messagesBoxRef} id="messages-box" className="chat-messages overflow-auto px-5">
           {messagesForCurrentChannel.map(({ id, text, username }) => (
-            renderMessage({ id, text, username })
+            renderMessage(id, text, username)
           ))}
         </div>
         <MessageSubmitForm />

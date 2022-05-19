@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import ChannelsSidebar from './ChannelsSidebar.jsx';
 import MessagesBlock from './MessagesBlock.jsx';
 import { actions } from '../../../slices/index.js';
@@ -11,19 +12,18 @@ import { usersPath } from '../../../routes.js';
 const { getData } = actions;
 
 function MainPage() {
-  const auth = useAuth();
-
-  const headers = auth.getAuthHeader();
   const { t } = useTranslation();
-
   const dispatch = useDispatch();
 
+  const auth = useAuth();
+  const headers = auth.getAuthHeader();
+
+  const [active, setActive] = useState(true);
+
   useEffect(() => {
-    // eslint-disable-next-line functional/no-let
-    let isActive = true;
     const fetchData = async () => {
       const { data } = await axios.get(usersPath(), { headers });
-      if (isActive) {
+      if (active) {
         dispatch(getData(data));
       }
     };
@@ -31,12 +31,13 @@ function MainPage() {
     fetchData()
       .catch((err) => {
         console.log(err);
+        toast.error(t('notifications.connectionError'));
       });
 
     return () => {
-      isActive = false;
+      setActive(false);
     };
-  }, [auth, headers, dispatch, t]);
+  }, [auth, headers, dispatch, t, active]);
 
   return (
     <div className="container h-100 my-4 overflow-hidden rounded shadow">

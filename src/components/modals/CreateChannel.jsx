@@ -10,6 +10,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
+import { toast } from 'react-toastify';
 import { useSocket } from '../../hooks/index.js';
 import { actions } from '../../slices/index.js';
 import { getChannelsNames } from './selectors.js';
@@ -38,6 +39,7 @@ function CreateChannel({ handleClose }) {
     onSubmit: async (values, { resetForm }) => {
       const newChannel = { name: values.name };
       const channel = await socket.addChannel(newChannel);
+      toast.success(t('notifications.channelAdded'));
       dispatch(actions.currentChannelIdUpdated(channel.id));
       resetForm('');
 

@@ -10,6 +10,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import * as yup from 'yup';
+import { toast } from 'react-toastify';
 import { useSocket } from '../../hooks/index.js';
 import { getChannelsNames, getPreviousChannelName, getChannelWithActionId } from './selectors.js';
 
@@ -39,6 +40,7 @@ function RenameChannel({ handleClose }) {
     onSubmit: async ({ name }, { resetForm }) => {
       resetForm('');
       await socket.renameChannel({ id, name });
+      toast.success(t('notifications.channelRenamed'));
       handleClose();
     },
   });

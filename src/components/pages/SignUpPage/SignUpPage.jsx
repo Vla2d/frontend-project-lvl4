@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { signUpPath } from '../../../routes.js';
 import { useAuth } from '../../../hooks/index.js';
 
@@ -48,13 +49,9 @@ function SignUp() {
 
         navigate('/');
       } catch (err) {
-        if (err.isAxiosError && err.response.status === 409) {
-          setRegistrationFailed(t('errors.nicknameExists'));
-          console.log(err);
-          return;
-        }
-
-        throw err;
+        setRegistrationFailed(t('errors.nicknameExists'));
+        console.log(err);
+        toast.error(t('notifications.connectionError'));
       }
     },
   });
@@ -131,7 +128,7 @@ function SignUp() {
                   />
                   <Form.Label htmlFor="confirmPassword">{t('passwordConfirmation')}</Form.Label>
                   <Form.Control.Feedback type="invalid" tooltip placement="right">
-                    {formik.errors.confirmPassword || t('errors.nicknameExists')}
+                    {t('errors.passwordConjunction') || t('errors.nicknameExists')}
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Button

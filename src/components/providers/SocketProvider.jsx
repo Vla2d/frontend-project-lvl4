@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import socketContext from '../../contexts/socketContext.jsx';
 
 const promisify = (socketFunction) => (...args) => new Promise((resolve, reject) => {
@@ -16,14 +16,14 @@ function SocketProvider({ socket, children }) {
   const removeChannel = promisify((...args) => socket.emit('removeChannel', ...args));
   const renameChannel = promisify((...args) => socket.emit('renameChannel', ...args));
 
+  const cached = useMemo(() => ({
+    addMessage,
+    addChannel,
+    removeChannel,
+    renameChannel,
+  }), [addMessage, addChannel, removeChannel, renameChannel]);
   return (
-    <socketContext.Provider value={{
-      addMessage,
-      addChannel,
-      removeChannel,
-      renameChannel,
-    }}
-    >
+    <socketContext.Provider value={cached}>
       {children}
     </socketContext.Provider>
   );

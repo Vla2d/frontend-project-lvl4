@@ -1,39 +1,41 @@
 import '../assets/application.scss';
+import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import {
   BrowserRouter,
   Routes,
   Route,
   Navigate,
-  Outlet,
 } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import toastConfig from './notifications/index.js';
 import { Header, Container } from './layout/index.js';
 import {
   NotFound, Login, Main, SignUp,
 } from './pages/index.js';
 import { AuthProvider } from './providers/index.js';
 import { useAuth } from '../hooks/index.js';
+import {
+  logInPagePath, signUpPagePath, notFoundPagePath, chatPagePath,
+} from '../routes.js';
 
-function PrivateRoute() {
+function ChatRoute() {
   const auth = useAuth();
-  return auth.loggedIn ? <Outlet /> : <Navigate to="/login" />;
+  return auth.loggedIn ? <Main /> : <Navigate to="/login" />;
 }
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <ToastContainer />
+        <ToastContainer autoClose={toastConfig.autoClose} />
         <Container>
           <Header />
           <Routes>
-            <Route path="/" element={<PrivateRoute />}>
-              <Route path="/" element={<Main />} />
-            </Route>
-            <Route path="login" element={<Login />} />
-            <Route path="signup" element={<SignUp />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path={chatPagePath()} element={<ChatRoute />} />
+            <Route path={logInPagePath()} element={<Login />} />
+            <Route path={signUpPagePath()} element={<SignUp />} />
+            <Route path={notFoundPagePath()} element={<NotFound />} />
           </Routes>
         </Container>
       </BrowserRouter>

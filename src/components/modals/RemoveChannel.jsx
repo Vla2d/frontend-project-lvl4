@@ -5,6 +5,7 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { useSocket } from '../../hooks/index.js';
 import { actions } from '../../slices/index.js';
 import { getChannelWithActionId } from './selectors.js';
@@ -20,6 +21,7 @@ function RemoveChannel({ handleClose }) {
   const handleDelete = async () => {
     dispatch(actions.currentChannelIdUpdated(channels[0].id));
     await socket.removeChannel({ id });
+    toast.success(t('notifications.channelRemoved'));
     handleClose();
   };
 

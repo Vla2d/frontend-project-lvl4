@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import authContext from '../../contexts/authContext.jsx';
 
 function AuthProvider({ children }) {
@@ -7,31 +7,32 @@ function AuthProvider({ children }) {
   const [userName, setUserName] = useState(currentUser ? currentUser.username : null);
 
   const loggedIn = token != null;
-  const logIn = (data) => {
+  const logIn = useCallback((data) => {
     localStorage.setItem('user', JSON.stringify(data));
     setUserName(data.username);
-  };
-  const logOut = () => {
+  }, []);
+  const logOut = useCallback(() => {
     localStorage.removeItem('user');
     setUserName(null);
-  };
-  const getAuthHeader = () => {
+  }, []);
+  const getAuthHeader = useCallback(() => {
     if (userName && token) {
       return { Authorization: `Bearer ${token}` };
     }
 
     return {};
-  };
+  }, [userName, token]);
 
-  return (
-    <authContext.Provider value={{
+  const cached = useMemo(() => (
+    {
       userName,
       loggedIn,
       logOut,
       logIn,
       getAuthHeader,
-    }}
-    >
+    }), [userName, loggedIn, logOut, logIn, getAuthHeader]);
+  return (
+    <authContext.Provider value={cached}>
       {children}
     </authContext.Provider>
   );
