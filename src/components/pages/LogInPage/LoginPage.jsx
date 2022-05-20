@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../hooks/index.js';
 import { loginPath } from '../../../routes.js';
+import loginLogo from './login.jpg';
 
 function LoginPage() {
   const [authFailed, setAuthFailed] = useState(false);
@@ -58,7 +59,10 @@ function LoginPage() {
         <div className="col-12 col-md-8 col-xxl-6">
           <Card className="shadow-sm">
             <Card.Body className="row p-4">
-              <Form className="mt-3 mt-mb-0" onSubmit={formik.handleSubmit}>
+              <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
+                <img className="rounded-circle" src={loginLogo} alt={t('buttons.logIn')} />
+              </div>
+              <Form className="col-12 col-md-6 mt-3 mt-mb-0" onSubmit={formik.handleSubmit}>
                 <h1 className="text-center mb-4">{t('buttons.logIn')}</h1>
                 <Form.Group className="form-floating mb-3 form-group">
                   <Form.Control

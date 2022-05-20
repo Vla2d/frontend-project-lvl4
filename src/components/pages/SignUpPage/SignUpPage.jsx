@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { signUpPath } from '../../../routes.js';
 import { useAuth } from '../../../hooks/index.js';
+import signUpLogo from './signup.png';
 
 function SignUp() {
   const [registrationFailed, setRegistrationFailed] = useState(false);
@@ -65,6 +66,9 @@ function SignUp() {
         <div className="col-12 col-md-8 col-xxl-6">
           <Card className="shadow-sm">
             <Card.Body className="d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
+              <div>
+                <img src={signUpLogo} className="rounded-circle" alt={t('signUp')} />
+              </div>
               <Form className="w-50" onSubmit={formik.handleSubmit}>
                 <h1 className="text-center mb-4">{t('signUp')}</h1>
                 <Form.Group className="form-floating mb-3 form-group">
