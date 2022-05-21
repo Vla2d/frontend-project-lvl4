@@ -5,7 +5,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { signUpPath } from '../../../routes.js';
+import { signUpPath, chatPagePath } from '../../../routes.js';
 import { useAuth } from '../../../hooks/index.js';
 import signUpLogo from './signup.png';
 
@@ -47,10 +47,10 @@ function SignUp() {
         const res = await axios.post(signUpPath(), values);
         auth.logIn(res.data);
 
-        navigate('/');
+        navigate(chatPagePath());
       } catch (err) {
         if (err.isAxiosError && err.response.status === 409) {
-          setRegistrationFailed(t('errors.nicknameExists'));
+          setRegistrationFailed(true);
           return;
         }
 
@@ -67,7 +67,11 @@ function SignUp() {
           <Card className="shadow-sm">
             <Card.Body className="d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
               <div>
-                <img src={signUpLogo} className="rounded-circle" alt={t('signUp')} />
+                <img
+                  src={signUpLogo}
+                  className="rounded-circle"
+                  alt={t('signUp')}
+                />
               </div>
               <Form className="w-50" onSubmit={formik.handleSubmit}>
                 <h1 className="text-center mb-4">{t('signUp')}</h1>
@@ -75,23 +79,25 @@ function SignUp() {
                   <Form.Control
                     id="username"
                     name="username"
-                    autoComplete="username"
+                    autoComplete="off"
                     placeholder={t('errors.nicknameLength')}
                     required
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.username}
                     ref={usernameInputRef}
+                    isValid={!formik.errors.username && formik.touched.username}
                     isInvalid={
-                      (formik.errors.username
-                        && formik.touched.username)
-                        || registrationFailed
-                      }
+                      (formik.errors.username && formik.touched.username)
+                      || registrationFailed
+                    }
                   />
-                  <Form.Label htmlFor="username">{t('userNickname')}</Form.Label>
-                  <Form.Control.Feedback type="invalid" placement="right">
-                    {formik.errors.username}
-                  </Form.Control.Feedback>
+                  <Form.Label htmlFor="username">
+                    {t('userNickname')}
+                  </Form.Label>
+                  {formik.errors.username
+                    ? <Form.Control.Feedback type="invalid" tooltip>{formik.errors.username}</Form.Control.Feedback>
+                    : <Form.Control.Feedback type="invalid" tooltip>{t('errors.nicknameExists')}</Form.Control.Feedback>}
                 </Form.Group>
                 <Form.Group className="form-floating mb-3 form-group">
                   <Form.Control
@@ -105,16 +111,13 @@ function SignUp() {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.password}
-                    isInvalid={
-                      (formik.errors.password
-                        && formik.touched.password)
-                        || registrationFailed
-                      }
+                    isValid={!formik.errors.password && formik.touched.password}
+                    isInvalid={formik.errors.password && formik.touched.password}
                   />
                   <Form.Label htmlFor="password">{t('password')}</Form.Label>
-                  <Form.Control.Feedback type="invalid" placement="right">
-                    {formik.errors.password}
-                  </Form.Control.Feedback>
+                  {formik.errors.password
+                    ? <Form.Control.Feedback type="invalid" tooltip>{formik.errors.password}</Form.Control.Feedback>
+                    : null}
                 </Form.Group>
                 <Form.Group className="form-floating mb-3 form-group">
                   <Form.Control
@@ -127,16 +130,15 @@ function SignUp() {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.confirmPassword}
-                    isInvalid={
-                      (formik.errors.confirmPassword
-                        && formik.touched.confirmPassword)
-                        || registrationFailed
-                      }
+                    isValid={!formik.errors.confirmPassword && formik.touched.confirmPassword}
+                    isInvalid={formik.errors.confirmPassword && formik.touched.confirmPassword}
                   />
-                  <Form.Label htmlFor="confirmPassword">{t('passwordConfirmation')}</Form.Label>
-                  <Form.Control.Feedback type="invalid" placement="right">
-                    {formik.errors.confirmPassword || t('errors.nicknameExists')}
-                  </Form.Control.Feedback>
+                  <Form.Label htmlFor="confirmPassword">
+                    {t('passwordConfirmation')}
+                  </Form.Label>
+                  {formik.errors.confirmPassword
+                    ? <Form.Control.Feedback type="invalid" tooltip>{formik.errors.confirmPassword}</Form.Control.Feedback>
+                    : null}
                 </Form.Group>
                 <Button
                   variant="outline-primary"

@@ -6,9 +6,7 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import toastConfig from './notifications/index.js';
-import { Header, Container } from './layout/index.js';
+import { Header, Container, NotificationsContainer } from './layout/index.js';
 import {
   NotFound, Login, Main, SignUp,
 } from './pages/index.js';
@@ -20,14 +18,14 @@ import {
 
 function ChatRoute() {
   const auth = useAuth();
-  return auth.loggedIn ? <Main /> : <Navigate to="/login" />;
+  return auth.loggedIn ? <Main /> : <Navigate to={logInPagePath()} />;
 }
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <ToastContainer autoClose={toastConfig.autoClose} />
+        <NotificationsContainer />
         <Container>
           <Header />
           <Routes>

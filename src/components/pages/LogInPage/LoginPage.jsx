@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../hooks/index.js';
-import { loginPath } from '../../../routes.js';
+import { loginPath, chatPagePath, signUpPagePath } from '../../../routes.js';
 import loginLogo from './login.jpg';
 
 function LoginPage() {
@@ -38,7 +38,8 @@ function LoginPage() {
         const { data } = res;
         auth.logIn(data);
 
-        const { from } = location.state || { from: { pathname: '/' } };
+        const { from } = location.state || { from: { pathname: chatPagePath() } };
+        console.log(location.state);
         navigate(from);
       } catch (err) {
         if (err.isAxiosError && err.response.status === 401) {
@@ -71,7 +72,7 @@ function LoginPage() {
                     name="username"
                     id="username"
                     required
-                    autoComplete="username"
+                    autoComplete="off"
                     ref={usernameInputRef}
                     onChange={formik.handleChange}
                     value={formik.values.username}
@@ -116,7 +117,7 @@ function LoginPage() {
                   {t('noAccount')}
                   {' '}
                 </span>
-                <Link className="ml-5" to="/signup">{t('signUp')}</Link>
+                <Link className="ml-5" to={signUpPagePath()}>{t('signUp')}</Link>
               </div>
             </Card.Footer>
           </Card>
