@@ -45,7 +45,7 @@ function LoginPage() {
         if (err.isAxiosError) {
           toast.error(t('notifications.connectionError'));
         }
-        
+
         setAuthFailed(true);
         usernameInputRef.current.select();
         throw err;

@@ -25,7 +25,7 @@ function MainPage() {
       if (err.isAxiosError) {
         toast.error(t('notifications.connectionError'));
       }
-      
+
       throw err;
     }
   }, [auth, headers, dispatch, t]);
