@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import {
   Modal,
@@ -18,15 +18,14 @@ import { getChannelsNames } from './selectors.js';
 function CreateChannel({ handleClose }) {
   const addInputRef = useRef(null);
   const socket = useSocket();
-
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const channelsNames = useSelector(getChannelsNames);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     addInputRef.current.focus();
   }, []);
-
-  const { t } = useTranslation();
 
   const formik = useFormik({
     initialValues: {
@@ -37,13 +36,21 @@ function CreateChannel({ handleClose }) {
     }),
     validateOnChange: false,
     onSubmit: async (values, { resetForm }) => {
-      const newChannel = { name: values.name };
-      const channel = await socket.addChannel(newChannel);
-      toast.success(t('notifications.channelAdded'));
-      dispatch(actions.currentChannelIdUpdated(channel.id));
-      resetForm('');
+      try {
+        setIsCreating(true);
+        const newChannel = { name: values.name };
+        const channel = await socket.addChannel(newChannel);
 
-      handleClose();
+        dispatch(actions.currentChannelIdUpdated(channel.id));
+        toast.success(t('notifications.channelAdded'));
+        resetForm('');
+        handleClose();
+      } catch (err) {
+        toast.error(t('notifications.connectionError'));
+        throw err;
+      } finally {
+        setIsCreating(false);
+      }
     },
   });
 
@@ -57,6 +64,7 @@ function CreateChannel({ handleClose }) {
           type="button"
           className="btn btn-close"
           onClick={handleClose}
+          disabled={isCreating}
         />
       </Modal.Header>
 
@@ -79,10 +87,11 @@ function CreateChannel({ handleClose }) {
                 type="button"
                 className="me-2 btn btn-secondary"
                 onClick={handleClose}
+                disabled={isCreating}
               >
                 {t('buttons.cancel')}
               </button>
-              <Button type="submit" disabled={formik.isSubmitting}>{t('buttons.send')}</Button>
+              <Button type="submit" disabled={isCreating}>{t('buttons.send')}</Button>
             </div>
           </FormGroup>
         </Form>

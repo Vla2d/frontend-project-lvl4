@@ -46,15 +46,23 @@ function SignUp() {
       setRegistrationFailed(false);
       try {
         const res = await axios.post(signUpPath(), values);
-        auth.logIn(res.data);
 
+        auth.logIn(res.data);
         navigate(chatPagePath());
       } catch (err) {
         if (err.isAxiosError) {
-          toast.error(t('notifications.connectionError'));
+          if (!err.response) {
+            toast.error(t('notifications.connectionError'));
+            return;
+          }
+
+          if (err.response.status === 409) {
+            setRegistrationFailed(true);
+            return;
+          }
         }
 
-        setRegistrationFailed(true);
+        toast.error(t('notifications.unknownError'));
         throw err;
       }
     },

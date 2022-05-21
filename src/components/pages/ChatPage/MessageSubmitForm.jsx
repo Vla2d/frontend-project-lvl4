@@ -44,8 +44,8 @@ function MessageSubmitForm() {
         toast.error(t('notifications.connectionError'));
         throw err;
       } finally {
-        setIsSubmitting(false);
         resetForm('');
+        setIsSubmitting(false);
       }
     },
   });
@@ -65,6 +65,7 @@ function MessageSubmitForm() {
             required
             autoComplete="off"
             ref={addMessageInputRef}
+            disabled={isSubmitting}
           />
           <div className="input-group-append">
             <button type="submit" disabled={isSubmitting} className="btn btn-group-vertical">

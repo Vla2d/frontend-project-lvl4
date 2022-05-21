@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import {
   Modal,
@@ -18,16 +18,15 @@ function RenameChannel({ handleClose }) {
   const channelsNames = useSelector(getChannelsNames);
   const prevChannelName = useSelector(getPreviousChannelName);
   const id = useSelector(getChannelWithActionId);
-
+  const { t } = useTranslation();
   const renameInputRef = useRef(null);
   const socket = useSocket();
+  const [isRenaming, setIsRenaming] = useState(false);
 
   useEffect(() => {
     renameInputRef.current.focus();
     renameInputRef.current.select();
   }, []);
-
-  const { t } = useTranslation();
 
   const formik = useFormik({
     initialValues: {
@@ -38,10 +37,18 @@ function RenameChannel({ handleClose }) {
     }),
     validateOnChange: false,
     onSubmit: async ({ name }, { resetForm }) => {
-      resetForm('');
-      await socket.renameChannel({ id, name });
-      toast.success(t('notifications.channelRenamed'));
-      handleClose();
+      try {
+        setIsRenaming(true);
+        await socket.renameChannel({ id, name });
+        toast.success(t('notifications.channelRenamed'));
+        handleClose();
+      } catch (err) {
+        toast.error(t('notifications.connectionError'));
+        throw err;
+      } finally {
+        resetForm('');
+        setIsRenaming(false);
+      }
     },
   });
 
@@ -55,6 +62,7 @@ function RenameChannel({ handleClose }) {
           type="button"
           className="btn btn-close"
           onClick={handleClose}
+          disabled={isRenaming}
         />
       </Modal.Header>
 
@@ -76,10 +84,11 @@ function RenameChannel({ handleClose }) {
                 type="button"
                 className="me-2 btn btn-secondary"
                 onClick={handleClose}
+                disabled={isRenaming}
               >
                 {t('buttons.cancel')}
               </button>
-              <Button type="submit" disabled={formik.isSubmitting}>{t('buttons.send')}</Button>
+              <Button type="submit" disabled={isRenaming}>{t('buttons.send')}</Button>
             </div>
           </FormGroup>
         </Form>

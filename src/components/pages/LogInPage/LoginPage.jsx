@@ -36,18 +36,26 @@ function LoginPage() {
 
       try {
         const res = await axios.post(loginPath(), values);
+
         const { data } = res;
         auth.logIn(data);
-
         const { from } = location.state || { from: { pathname: chatPagePath() } };
         navigate(from);
       } catch (err) {
         if (err.isAxiosError) {
-          toast.error(t('notifications.connectionError'));
+          if (!err.response) {
+            toast.error(t('notifications.connectionError'));
+            return;
+          }
+
+          if (err.response.status === 401) {
+            setAuthFailed(true);
+            usernameInputRef.current.select();
+            return;
+          }
         }
 
-        setAuthFailed(true);
-        usernameInputRef.current.select();
+        toast.error(t('notifications.unknownError'));
         throw err;
       }
     },

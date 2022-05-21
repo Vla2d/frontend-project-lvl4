@@ -52,7 +52,7 @@ function ChannelsSidebar() {
     const SelectedModal = modalsMap[modalType];
 
     return (
-      <BootstrapModal show={isOpened} onHide={handleClose} centered>
+      <BootstrapModal backdrop="static" show={isOpened} onHide={handleClose} centered>
         {SelectedModal && <SelectedModal handleClose={handleClose} />}
       </BootstrapModal>
     );

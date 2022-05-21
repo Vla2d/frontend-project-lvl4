@@ -18,14 +18,21 @@ function MainPage() {
   const headers = auth.getAuthHeader();
 
   useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await axios.get(usersPath(), { headers });
+
+      dispatch(getData(data));
+    };
+
     try {
-      axios.get(usersPath(), { headers })
-        .then((res) => dispatch(getData(res.data)));
+      fetchData();
     } catch (err) {
-      if (err.isAxiosError) {
+      if (err.isAxiosError && !err.response) {
         toast.error(t('notifications.connectionError'));
+        return;
       }
 
+      toast.error(t('notifications.unknownError'));
       throw err;
     }
   }, [auth, headers, dispatch, t]);

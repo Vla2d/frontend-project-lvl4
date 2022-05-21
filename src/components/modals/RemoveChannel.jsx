@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   Button,
@@ -15,14 +15,22 @@ function RemoveChannel({ handleClose }) {
   const { channels } = useSelector((state) => state.channelsReducers);
   const id = useSelector(getChannelWithActionId);
   const socket = useSocket();
-
   const { t } = useTranslation();
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const handleDelete = async () => {
-    dispatch(actions.currentChannelIdUpdated(channels[0].id));
-    await socket.removeChannel({ id });
-    toast.success(t('notifications.channelRemoved'));
-    handleClose();
+    try {
+      setIsRemoving(true);
+      await socket.removeChannel({ id });
+      dispatch(actions.currentChannelIdUpdated(channels[0].id));
+      toast.success(t('notifications.channelRemoved'));
+    } catch (err) {
+      toast.error(t('notifications.connectionError'));
+      throw err;
+    } finally {
+      handleClose();
+      setIsRemoving(false);
+    }
   };
 
   return (
@@ -35,14 +43,15 @@ function RemoveChannel({ handleClose }) {
           type="button"
           className="btn btn-close"
           onClick={handleClose}
+          disabled={isRemoving}
         />
       </Modal.Header>
 
       <Modal.Body>
         <p className="lead">{t('chat.areYouSure')}</p>
         <div className="d-flex justify-content-end">
-          <Button className="me-2" variant="secondary" onClick={handleClose}>{t('buttons.cancel')}</Button>
-          <Button variant="danger" onClick={handleDelete}>{t('buttons.remove')}</Button>
+          <Button disabled={isRemoving} className="me-2" variant="secondary" onClick={handleClose}>{t('buttons.cancel')}</Button>
+          <Button disabled={isRemoving} variant="danger" onClick={handleDelete}>{t('buttons.remove')}</Button>
         </div>
       </Modal.Body>
     </>
