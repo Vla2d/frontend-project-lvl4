@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -14,6 +14,7 @@ function MessageSubmitForm() {
   const { t } = useTranslation();
   const auth = useAuth();
   const socket = useSocket();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     addMessageInputRef.current.focus();
@@ -35,14 +36,17 @@ function MessageSubmitForm() {
         text: filter.clean(values.body),
         username: userName,
       };
+
       try {
+        setIsSubmitting(true);
         await socket.addMessage(newMessage);
       } catch (err) {
-        console.log(err);
         toast.error(t('notifications.connectionError'));
+        throw err;
+      } finally {
+        setIsSubmitting(false);
+        resetForm('');
       }
-
-      resetForm('');
     },
   });
 
@@ -63,7 +67,7 @@ function MessageSubmitForm() {
             ref={addMessageInputRef}
           />
           <div className="input-group-append">
-            <button type="submit" disabled={!formik.dirty} className="btn btn-group-vertical">
+            <button type="submit" disabled={isSubmitting} className="btn btn-group-vertical">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"

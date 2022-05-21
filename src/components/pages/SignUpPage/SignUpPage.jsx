@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { signUpPath, chatPagePath } from '../../../routes.js';
 import { useAuth } from '../../../hooks/index.js';
 import signUpLogo from './signup.png';
@@ -49,12 +50,11 @@ function SignUp() {
 
         navigate(chatPagePath());
       } catch (err) {
-        if (err.isAxiosError && err.response.status === 409) {
-          setRegistrationFailed(true);
-          return;
+        if (err.isAxiosError) {
+          toast.error(t('notifications.connectionError'));
         }
 
-        console.log(err);
+        setRegistrationFailed(true);
         throw err;
       }
     },

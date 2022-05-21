@@ -111,7 +111,7 @@ function ChannelsSidebar() {
           <span className="visually-hidden">+</span>
         </button>
       </div>
-      {channels && renderChannelsList(channels)}
+      {renderChannelsList(channels)}
       {renderModal(modals)}
     </div>
   );
