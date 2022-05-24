@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useContext, useState, useEffect, useRef,
+} from 'react';
 import { useFormik } from 'formik';
 import {
   Modal,
@@ -11,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { useSocket } from '../../hooks/index.js';
+import socketContext from '../../contexts/socketContext.jsx';
 import { getChannelsNames, getPreviousChannelName, getChannelWithActionId } from './selectors.js';
 
 function RenameChannel({ handleClose }) {
@@ -20,7 +22,7 @@ function RenameChannel({ handleClose }) {
   const id = useSelector(getChannelWithActionId);
   const { t } = useTranslation();
   const renameInputRef = useRef(null);
-  const socket = useSocket();
+  const socket = useContext(socketContext);
   const [isRenaming, setIsRenaming] = useState(false);
 
   useEffect(() => {
@@ -40,14 +42,14 @@ function RenameChannel({ handleClose }) {
       try {
         setIsRenaming(true);
         await socket.renameChannel({ id, name });
+        setIsRenaming(false);
         toast.success(t('notifications.channelRenamed'));
+        resetForm('');
         handleClose();
       } catch (err) {
+        setIsRenaming(false);
         toast.error(t('notifications.connectionError'));
         throw err;
-      } finally {
-        resetForm('');
-        setIsRenaming(false);
       }
     },
   });

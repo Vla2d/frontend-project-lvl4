@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import ChannelsSidebar from './ChannelsSidebar.jsx';
 import MessagesBlock from './MessagesBlock.jsx';
 import { actions } from '../../../slices/index.js';
-import { useAuth } from '../../../hooks/index.js';
+import authContext from '../../../contexts/authContext.jsx';
 import { usersPath } from '../../../routes.js';
 
 const { getData } = actions;
@@ -14,7 +14,7 @@ const { getData } = actions;
 function MainPage() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const auth = useAuth();
+  const auth = useContext(authContext);
   const headers = auth.getAuthHeader();
 
   useEffect(() => {

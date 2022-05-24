@@ -1,4 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, {
+  useContext, useRef, useEffect, useState,
+} from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -6,14 +8,15 @@ import * as filter from 'leo-profanity';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { useAuth, useSocket } from '../../../hooks/index.js';
+import authContext from '../../../contexts/authContext.jsx';
+import socketContext from '../../../contexts/socketContext.jsx';
 import { getCurrentChannelId } from './selectors.js';
 
 function MessageSubmitForm() {
   const addMessageInputRef = useRef(null);
   const { t } = useTranslation();
-  const auth = useAuth();
-  const socket = useSocket();
+  const auth = useContext(authContext);
+  const socket = useContext(socketContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {

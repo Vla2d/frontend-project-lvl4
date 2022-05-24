@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../hooks/index.js';
+import authContext from '../../contexts/authContext.jsx';
 import { chatPagePath } from '../../routes.js';
 
 function Header() {
   const { t } = useTranslation();
-  const auth = useAuth();
+  const auth = useContext(authContext);
 
   const handleLogout = () => {
     auth.logOut();

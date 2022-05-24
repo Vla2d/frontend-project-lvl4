@@ -20,8 +20,3 @@ export const getChannels = (state) => {
   const { channels } = state.channelsReducers;
   return channels;
 };
-
-export const getModalData = (state) => {
-  const { modalReducers } = state;
-  return modalReducers;
-};

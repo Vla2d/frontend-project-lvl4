@@ -3,13 +3,12 @@ import { Provider } from 'react-redux';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 import { I18nextProvider } from 'react-i18next';
 import { configureStore } from '@reduxjs/toolkit';
-import { io } from 'socket.io-client';
 import reducer, { actions } from './slices/index.js';
 import App from './components/App.jsx';
 import getI18nInstance from './locales/getI18nInstance.js';
 import SocketProvider from './components/providers/SocketProvider.jsx';
 
-async function Init(socketInstance = io()) {
+async function Init(socketInstance) {
   const store = configureStore({
     reducer,
   });
@@ -30,7 +29,7 @@ async function Init(socketInstance = io()) {
   const i18nInstance = await getI18nInstance();
 
   const rollbarConfig = {
-    accessToken: 'd18bf0d072b4414ebbf5f99fe5ab09a7',
+    accessToken: process.env.ROLLBAR_TOKEN,
     captureUncaught: true,
     captureUnhandledRejections: true,
     payload: {

@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useContext, useState, useEffect, useRef,
+} from 'react';
 import { useFormik } from 'formik';
 import {
   Modal,
@@ -11,13 +13,13 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { useSocket } from '../../hooks/index.js';
+import socketContext from '../../contexts/socketContext.jsx';
 import { actions } from '../../slices/index.js';
 import { getChannelsNames } from './selectors.js';
 
 function CreateChannel({ handleClose }) {
   const addInputRef = useRef(null);
-  const socket = useSocket();
+  const socket = useContext(socketContext);
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const channelsNames = useSelector(getChannelsNames);
@@ -40,16 +42,15 @@ function CreateChannel({ handleClose }) {
         setIsCreating(true);
         const newChannel = { name: values.name };
         const channel = await socket.addChannel(newChannel);
-
+        setIsCreating(false);
         dispatch(actions.currentChannelIdUpdated(channel.id));
         toast.success(t('notifications.channelAdded'));
         resetForm('');
         handleClose();
       } catch (err) {
+        setIsCreating(false);
         toast.error(t('notifications.connectionError'));
         throw err;
-      } finally {
-        setIsCreating(false);
       }
     },
   });

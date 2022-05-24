@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {
+  useContext, useState, useRef, useEffect,
+} from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
@@ -7,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { signUpPath, chatPagePath } from '../../../routes.js';
-import { useAuth } from '../../../hooks/index.js';
+import authContext from '../../../contexts/authContext.jsx';
 import signUpLogo from './signup.png';
 
 function SignUp() {
@@ -15,7 +17,7 @@ function SignUp() {
   const usernameInputRef = useRef(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const auth = useAuth();
+  const auth = useContext(authContext);
 
   useEffect(() => {
     usernameInputRef.current.focus();

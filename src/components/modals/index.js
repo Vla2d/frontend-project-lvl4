@@ -8,4 +8,6 @@ const modals = {
   renamingChannel: RenameChannel,
 };
 
-export default modals;
+const getModal = (modalType) => modals[modalType];
+
+export default getModal;

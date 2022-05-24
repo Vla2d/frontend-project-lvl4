@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Modal,
   Button,
@@ -6,7 +6,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { useSocket } from '../../hooks/index.js';
+import socketContext from '../../contexts/socketContext.jsx';
 import { actions } from '../../slices/index.js';
 import { getChannelWithActionId } from './selectors.js';
 
@@ -14,7 +14,7 @@ function RemoveChannel({ handleClose }) {
   const dispatch = useDispatch();
   const { channels } = useSelector((state) => state.channelsReducers);
   const id = useSelector(getChannelWithActionId);
-  const socket = useSocket();
+  const socket = useContext(socketContext);
   const { t } = useTranslation();
   const [isRemoving, setIsRemoving] = useState(false);
 
@@ -22,14 +22,14 @@ function RemoveChannel({ handleClose }) {
     try {
       setIsRemoving(true);
       await socket.removeChannel({ id });
+      setIsRemoving(false);
       dispatch(actions.currentChannelIdUpdated(channels[0].id));
       toast.success(t('notifications.channelRemoved'));
+      handleClose();
     } catch (err) {
+      setIsRemoving(false);
       toast.error(t('notifications.connectionError'));
       throw err;
-    } finally {
-      handleClose();
-      setIsRemoving(false);
     }
   };
 
