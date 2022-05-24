@@ -2,60 +2,37 @@ import React from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
-import { Modal as BootstrapModal } from 'react-bootstrap';
 import ChannelDropdownButton from './ChannelDropdownButton.jsx';
-import { getChannels, getCurrentChannelId, getModalData } from './selectors.js';
+import { getChannels, getCurrentChannelId } from './selectors.js';
 import { actions } from '../../../slices/index.js';
-import modals from '../../modals/index.js';
 
 function ChannelsSidebar() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-
   const channels = useSelector(getChannels);
   const currentChannelId = useSelector(getCurrentChannelId);
-  const { isOpened, modalType } = useSelector(getModalData);
   const {
     openModal,
     currentChannelIdUpdated,
     channelWithActionUpdated,
   } = actions;
 
-  const handleAddChannel = (action) => () => {
-    dispatch(openModal(action));
-  };
-
   const handleChangeChannel = (channelId) => () => {
     dispatch(currentChannelIdUpdated(channelId));
   };
 
-  const handleRemoveChannel = (id, name, action) => async (e) => {
-    e.preventDefault();
-    dispatch(channelWithActionUpdated({ id, name }));
-    dispatch(openModal(action));
+  const handleAddChannel = (action) => () => { // addingChannel
+    dispatch(openModal({ action, channelData: {} }));
   };
 
-  const handleRenameChannel = (id, name, action) => async (e) => {
-    e.preventDefault();
+  const handleRemoveChannel = (id, name, action) => () => { // removingChannel
     dispatch(channelWithActionUpdated({ id, name }));
-    dispatch(openModal(action));
+    dispatch(openModal({ action, channelData: { channelId: id } }));
   };
 
-  const renderModal = (modalsMap) => {
-    const handleClose = () => {
-      dispatch(actions.closeModal());
-    };
-
-    if (modalType === null) {
-      return null;
-    }
-    const SelectedModal = modalsMap[modalType];
-
-    return (
-      <BootstrapModal backdrop="static" show={isOpened} onHide={handleClose} centered>
-        {SelectedModal && <SelectedModal handleClose={handleClose} />}
-      </BootstrapModal>
-    );
+  const handleRenameChannel = (id, name, action) => () => { // renamingChannel
+    dispatch(channelWithActionUpdated({ id, name }));
+    dispatch(openModal({ action, channelData: { channelId: id } }));
   };
 
   const renderChannelsList = (channelsData) => {
@@ -112,7 +89,6 @@ function ChannelsSidebar() {
         </button>
       </div>
       {renderChannelsList(channels)}
-      {renderModal(modals)}
     </div>
   );
 }

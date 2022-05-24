@@ -1,5 +1,5 @@
 import 'react-toastify/dist/ReactToastify.css';
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -10,14 +10,15 @@ import { Header, Container, NotificationsContainer } from './layout/index.js';
 import {
   NotFound, Login, Main, SignUp,
 } from './pages/index.js';
+import Modal from './modals/Modal.jsx';
 import { AuthProvider } from './providers/index.js';
-import { useAuth } from '../hooks/index.js';
+import authContext from '../contexts/authContext.jsx';
 import {
   logInPagePath, signUpPagePath, notFoundPagePath, chatPagePath,
 } from '../routes.js';
 
 function ChatRoute() {
-  const auth = useAuth();
+  const auth = useContext(authContext);
   return auth.loggedIn ? <Main /> : <Navigate to={logInPagePath()} />;
 }
 
@@ -26,6 +27,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <NotificationsContainer />
+        <Modal />
         <Container>
           <Header />
           <Routes>

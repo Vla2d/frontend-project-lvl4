@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useContext, useEffect, useRef, useState,
+} from 'react';
 import { useFormik } from 'formik';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Form, Button, Card } from 'react-bootstrap';
@@ -6,7 +8,7 @@ import * as yup from 'yup';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { useAuth } from '../../../hooks/index.js';
+import authContext from '../../../contexts/authContext.jsx';
 import { loginPath, chatPagePath, signUpPagePath } from '../../../routes.js';
 import loginLogo from './login.jpg';
 
@@ -15,7 +17,7 @@ function LoginPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const usernameInputRef = useRef(null);
-  const auth = useAuth();
+  const auth = useContext(authContext);
   const { t } = useTranslation();
 
   useEffect(() => {

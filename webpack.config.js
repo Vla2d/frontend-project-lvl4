@@ -1,11 +1,14 @@
-// @ts-check
+import path from 'path';
+import { fileURLToPath } from 'url';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import webpack from 'webpack';
 
-const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const mode = process.env.NODE_ENV || 'development';
 
-module.exports = {
+export default {
   mode,
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -22,6 +25,9 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.ROLLBAR_TOKEN': JSON.stringify(process.env.ROLLBAR_TOKEN),
+    }),
   ],
   module: {
     rules: [
