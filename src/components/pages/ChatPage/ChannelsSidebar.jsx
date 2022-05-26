@@ -14,25 +14,22 @@ function ChannelsSidebar() {
   const {
     openModal,
     currentChannelIdUpdated,
-    channelWithActionUpdated,
   } = actions;
 
   const handleChangeChannel = (channelId) => () => {
     dispatch(currentChannelIdUpdated(channelId));
   };
 
-  const handleAddChannel = (action) => () => { // addingChannel
+  const handleAddChannel = (action) => () => {
     dispatch(openModal({ action, channelData: {} }));
   };
 
-  const handleRemoveChannel = (id, name, action) => () => { // removingChannel
-    dispatch(channelWithActionUpdated({ id, name }));
-    dispatch(openModal({ action, channelData: { channelId: id } }));
+  const handleRemoveChannel = (id, name, action) => () => {
+    dispatch(openModal({ action, channelData: { name, id } }));
   };
 
-  const handleRenameChannel = (id, name, action) => () => { // renamingChannel
-    dispatch(channelWithActionUpdated({ id, name }));
-    dispatch(openModal({ action, channelData: { channelId: id } }));
+  const handleRenameChannel = (id, name, action) => () => {
+    dispatch(openModal({ action, channelData: { name, id } }));
   };
 
   const renderChannelsList = (channelsData) => {

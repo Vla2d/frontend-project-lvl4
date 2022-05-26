@@ -4,7 +4,10 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   isOpened: false,
   modalType: null,
-  modalChannelId: null,
+  modalChannel: {
+    name: null,
+    id: null,
+  },
 };
 
 const modalSlice = createSlice({
@@ -14,13 +17,15 @@ const modalSlice = createSlice({
     openModal: (state, { payload }) => {
       state.isOpened = true;
       state.modalType = payload.action;
-      state.modalChannelId = payload.channelData.channelId;
+      state.modalChannel.name = payload.channelData.name;
+      state.modalChannel.id = payload.channelData.id;
     },
     closeModal: (state) => {
-      const { isOpened, modalType, modalChannelId } = initialState;
+      const { isOpened, modalType, modalChannel } = initialState;
       state.isOpened = isOpened;
       state.modalType = modalType;
-      state.modalChannelId = modalChannelId;
+      state.modalChannel.name = modalChannel.name;
+      state.modalChannel.id = modalChannel.id;
     },
   },
 });

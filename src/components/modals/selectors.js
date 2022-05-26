@@ -4,11 +4,11 @@ export const getChannelsNames = (state) => {
   return channelsNames;
 };
 
-export const getChannelWithActionId = (state) => state.modalReducers.modalChannelId;
+export const getChannelWithActionId = (state) => state.modalReducers.modalChannel.id;
 
 export const getPreviousChannelName = (state) => {
-  const { channelWithAction } = state.channelsReducers;
-  return channelWithAction.name;
+  const { modalChannel } = state.modalReducers;
+  return modalChannel.name;
 };
 
 export const getModalData = (state) => {
